@@ -11,7 +11,12 @@ router.post("/", async (req, res, next) => {
     const senderId = req.user.id;
     const { recipientId, text, conversationId, sender } = req.body;
 
-    // find the conversation, and check if the sender of the message is one of the two users of the conversation
+    /* 
+      Find the conversation
+      If Conversation exists, then check if the sender of the message is one of the two users of the conversation. If not,
+      return a 401 status code. 
+      If Conversation doesn't exist, then create a new conversation to attach the message too.
+    */
     const convo = await Conversation.findByPk(conversationId)
 
     if (convo && (convo.user1Id === senderId || convo.user2Id === senderId)) {
