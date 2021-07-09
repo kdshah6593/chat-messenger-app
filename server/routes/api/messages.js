@@ -11,33 +11,41 @@ router.post("/", async (req, res, next) => {
     const senderId = req.user.id;
     const { recipientId, text, conversationId, sender } = req.body;
 
-    // if we already know conversation id, we can save time and just add it to message and return
-    if (conversationId) {
-      const message = await Message.create({ senderId, text, conversationId });
-      return res.json({ message, sender });
-    }
-    // if we don't have conversation id, find a conversation to make sure it doesn't already exist
-    let conversation = await Conversation.findConversation(
-      senderId,
-      recipientId
-    );
+    // find the conversation, and check if the sender of the message is one of the two users of the conversation
+    const convo = await Conversation.findByPk(conversationId)
 
-    if (!conversation) {
-      // create conversation
-      conversation = await Conversation.create({
-        user1Id: senderId,
-        user2Id: recipientId,
-      });
-      if (onlineUsers.includes(sender.id)) {
-        sender.online = true;
+    if (convo && (convo.user1Id === senderId || convo.user2Id === senderId)) {
+      // if we already know conversation id, we can save time and just add it to message and return
+      if (conversationId) {
+        const message = await Message.create({ senderId, text, conversationId });
+        return res.json({ message, sender });
       }
+    } else if (convo === null) {
+      // if we don't have conversation id, find a conversation to make sure it doesn't already exist
+      let conversation = await Conversation.findConversation(
+        senderId,
+        recipientId
+      );
+
+      if (!conversation) {
+        // create conversation
+        conversation = await Conversation.create({
+          user1Id: senderId,
+          user2Id: recipientId,
+        });
+        if (onlineUsers.includes(sender.id)) {
+          sender.online = true;
+        }
+      }
+      const message = await Message.create({
+        senderId,
+        text,
+        conversationId: conversation.id,
+      });
+      res.json({ message, sender });
+    } else {
+      return res.sendStatus(401);
     }
-    const message = await Message.create({
-      senderId,
-      text,
-      conversationId: conversation.id,
-    });
-    res.json({ message, sender });
   } catch (error) {
     next(error);
   }
