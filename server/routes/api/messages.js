@@ -19,13 +19,13 @@ router.post("/", async (req, res, next) => {
     */
     const convo = await Conversation.findByPk(conversationId)
 
-    if (convo && (convo.user1Id === senderId || convo.user2Id === senderId)) {
+    if (convo?.user1Id === senderId || convo?.user2Id === senderId) {
       // if we already know conversation id, we can save time and just add it to message and return
       if (conversationId) {
         const message = await Message.create({ senderId, text, conversationId });
         return res.json({ message, sender });
       }
-    } else if (convo === null) {
+    } else if (!convo) {
       // if we don't have conversation id, find a conversation to make sure it doesn't already exist
       let conversation = await Conversation.findConversation(
         senderId,
