@@ -11,22 +11,17 @@ router.post("/", async (req, res, next) => {
     const senderId = req.user.id;
     const { recipientId, text, conversationId, sender } = req.body;
 
-    /* 
-      Find the conversation
-      If Conversation exists, then check if the sender of the message is one of the two users of the conversation. If not,
-      return a 401 status code. 
-      If Conversation doesn't exist, then create a new conversation to attach the message too.
-    */
-    const convo = await Conversation.findByPk(conversationId)
+    // if conversation exists and user is part of it, message will send
+    const currentConversation = await Conversation.findByPk(conversationId)
 
-    if (convo?.user1Id === senderId || convo?.user2Id === senderId) {
-      // if we already know conversation id, we can save time and just add it to message and return
+    if (currentConversation?.user1Id === senderId || currentConversation?.user2Id === senderId) {
+      // if conversation id known, add it to message and return
       if (conversationId) {
         const message = await Message.create({ senderId, text, conversationId });
         return res.json({ message, sender });
       }
-    } else if (!convo) {
-      // if we don't have conversation id, find a conversation to make sure it doesn't already exist
+    } else if (!currentConversation) {
+      // if conversation id unknown, find a conversation to make sure it doesn't already exist
       let conversation = await Conversation.findConversation(
         senderId,
         recipientId
