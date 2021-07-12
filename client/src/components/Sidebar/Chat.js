@@ -4,6 +4,7 @@ import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { withStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
 import { connect } from "react-redux";
+import UnreadBadge from "./UnreadBadge";
 
 const styles = {
   root: {
@@ -19,12 +20,21 @@ const styles = {
   },
 };
 
+
 class Chat extends Component {
   handleClick = async (conversation) => {
     await this.props.setActiveChat(conversation.otherUser.username);
   };
 
+  unreadCount = () => {
+    const convo = this.props.conversation
+    const unreadMessages = convo.messages.filter(message => message.isRead === false);
+    return unreadMessages.length;
+  }
+
   render() {
+    console.log(this.props.conversation);
+    console.log(this.unreadCount());
     const { classes } = this.props;
     const otherUser = this.props.conversation.otherUser;
     return (
@@ -39,6 +49,7 @@ class Chat extends Component {
           sidebar={true}
         />
         <ChatContent conversation={this.props.conversation} />
+        <UnreadBadge unreadCount={this.unreadCount} />
       </Box>
     );
   }
