@@ -6,7 +6,7 @@ const StyledBadge = withStyles({
   badge: {
     height: "20px",
     display: "flex",
-    padding: "0 6px",
+    padding: "0 8px",
     zIndex: "1",
     position: "absolute",
     flexWrap: "wrap",
