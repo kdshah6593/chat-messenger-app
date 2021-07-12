@@ -28,13 +28,11 @@ class Chat extends Component {
 
   unreadCount = () => {
     const convo = this.props.conversation
-    const unreadMessages = convo.messages.filter(message => message.isRead === false);
+    const unreadMessages = convo.messages.filter(message => message.isRead === false && message.senderId !== this.props.user.id);
     return unreadMessages.length;
   }
 
   render() {
-    console.log(this.props.conversation);
-    console.log(this.unreadCount());
     const { classes } = this.props;
     const otherUser = this.props.conversation.otherUser;
     return (
@@ -63,4 +61,10 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(withStyles(styles)(Chat));
+const mapStateToProps = (state) => {
+  return {
+    user: state.user
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Chat));
