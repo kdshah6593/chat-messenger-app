@@ -83,4 +83,71 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.patch('/:id', async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+
+    const userId = req.user.id
+    const { messages, conversationId, otherUserId } = req.body;
+
+    // const f = await Conversation.findOne({
+    //   where: {
+    //     id: conversationId,
+    //   },
+    //   include: Message
+    // });
+
+    const theConvo = await Conversation.findAll({
+      where: {
+        id: conversationId
+      },
+      attributes: ["id"],
+      order: [[Message, "createdAt", "DESC"]],
+      include: [
+        { model: Message, order: ["createdAt", "DESC"] },
+        {
+          model: User,
+          as: "user1",
+          where: {
+            id: {
+              [Op.not]: userId,
+            },
+          },
+          attributes: ["id", "username", "photoUrl"],
+          required: false,
+        },
+        {
+          model: User,
+          as: "user2",
+          where: {
+            id: {
+              [Op.not]: userId,
+            },
+          },
+          attributes: ["id", "username", "photoUrl"],
+          required: false,
+        },
+      ],
+    });
+    
+    // let h = theConvo[0].toJSON();
+    // console.log(h)
+    
+    for (let i = 0; i < theConvo.length; i++) {
+      const convo = theConvo[i];
+      const convoJSON = convo.toJSON();
+      convoJSON.messages = messages
+      theConvo[i] = convoJSON;
+    }
+
+    res.json(theConvo[0])
+    // res.json(h)
+
+  } catch (error) {
+    next(error);
+  }
+})
+
 module.exports = router;

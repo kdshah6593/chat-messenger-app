@@ -3,8 +3,10 @@ import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { withStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
+import { setReadStatus } from "../../store/conversations";
 import { connect } from "react-redux";
 import UnreadBadge from "./UnreadBadge";
+import axios from "axios";
 
 const styles = {
   root: {
@@ -23,6 +25,25 @@ const styles = {
 
 class Chat extends Component {
   handleClick = async (conversation) => {
+    let messages = conversation.messages
+    let readMessages = messages.map(message => {
+      if (message.senderId !== this.props.user.id) {
+        message.isRead = true;
+      }
+      return message;
+    })
+    let convoId = conversation.id
+    let otherUserId = conversation.otherUser.id
+
+    const body = {
+      messages: readMessages,
+      conversationId: convoId,
+      otherUserId: otherUserId
+    }
+
+    const { data } = await axios.patch(`/api/conversations/${convoId}`, body)
+
+    await this.props.setReadStatus(data.messages, convoId);
     await this.props.setActiveChat(conversation.otherUser.username);
   };
 
@@ -57,6 +78,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setActiveChat: (id) => {
       dispatch(setActiveChat(id));
+    },
+    setReadStatus: (messages, conversationId) => {
+      dispatch(setReadStatus(messages, conversationId));
     },
   };
 };
