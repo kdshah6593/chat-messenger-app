@@ -51,18 +51,6 @@ const ChatContent = (props) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        
-        {/* {
-          props.unreadCount() !== 0 ? 
-          <Typography className={`${classes.previewText} ${classes.pre}`}>
-            {latestMessageText}
-          </Typography> 
-          :
-          <Typography className={classes.previewText}>
-            {latestMessageText}
-          </Typography>
-        } */}
-        
         <Typography className={`${classes.previewText} ${props.unreadCount() !== 0 ? classes.previewTextBold : ""}`}>
           {latestMessageText}
         </Typography>
