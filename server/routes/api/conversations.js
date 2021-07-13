@@ -85,7 +85,10 @@ router.get("/", async (req, res, next) => {
 
 router.patch('/:id', async (req, res, next) => {
   try {
+    const convo = await Conversation.findByPk(req.params.id)
     if (!req.user) {
+      return res.sendStatus(401);
+    } else if (req.user.id !== convo.user1Id && req.user.id !== convo.user2Id) {
       return res.sendStatus(401);
     }
 
@@ -98,13 +101,12 @@ router.patch('/:id', async (req, res, next) => {
           id: messages[i].id
         }
       })
- 
-      msg.isRead = messages[i].isRead;
-      await msg.save();
+
+      msg.update({isRead: messages[i].isRead})
       updatedMessages.push(msg)
     }
 
-    res.json(updatedMessages);
+    res.status(200).json(updatedMessages);
 
   } catch (error) {
     next(error);
