@@ -3,6 +3,8 @@ import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { Search, Chat, CurrentUser } from "./index.js";
+import { setReadStatus } from "../../store/conversations";
+import axios from "axios";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -24,6 +26,11 @@ const Sidebar = (props) => {
   const conversations = props.conversations || [];
   const { handleChange, searchTerm } = props;
 
+  const updateReadStatus = async (body, convoId) => {
+    const { data } = await axios.patch(`/api/conversations/${convoId}`, body)
+    await props.setReadStatus(data, convoId);
+  }
+
   return (
     <Box className={classes.root}>
       <CurrentUser />
@@ -32,7 +39,7 @@ const Sidebar = (props) => {
       {conversations
         .filter((conversation) => conversation.otherUser.username.includes(searchTerm))
         .map((conversation) => {
-          return <Chat conversation={conversation} key={conversation.otherUser.username} />;
+          return <Chat conversation={conversation} key={conversation.otherUser.username} updateReadStatus={updateReadStatus} />;
         })}
     </Box>
   );
@@ -44,4 +51,12 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(Sidebar);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setReadStatus: (messages, conversationId) => {
+      dispatch(setReadStatus(messages, conversationId));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);
