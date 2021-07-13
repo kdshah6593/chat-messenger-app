@@ -86,8 +86,11 @@ export const setReadMessage = (state, payload) => {
   const {readMessages, conversationId} = payload;
   return state.map((convo) => {
     if (convo.id === conversationId) {
-      convo.messages = readMessages
+      const convoCopy = { ...convo };
+      convoCopy.messages = readMessages
+      return convoCopy
+    } else {
+      return convo
     }
-    return convo
   })
 }
