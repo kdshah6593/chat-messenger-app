@@ -1,17 +1,35 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, createTheme } from '@material-ui/core/styles';
 import Badge from '@material-ui/core/Badge';
+
+const theme = createTheme({
+  palette: {
+    info: {
+      main: '#2196f3',
+    },
+    badgeText: {
+      main: '#fff'
+    }
+  },
+  spacing: 5,
+  typography: {
+    fontFamily: 'Open Sans, Sans Serif',
+    fontSize: 10,
+    fontWeight: 700,
+  }
+});
+
 
 const StyledBadge = withStyles({
   badge: {
     height: 20,
     width: 20,
-    backgroundColor: "#3F92FF",
-    marginRight: 10,
-    color: "white",
-    fontSize: 10,
+    backgroundColor: theme.palette.info.main,
+    marginRight: theme.spacing(2),
+    color: theme.palette.badgeText.main,
+    fontSize: theme.typography.fontSize,
     letterSpacing: -0.5,
-    fontWeight: "bold",
+    fontWeight: theme.typography.fontWeight,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
