@@ -3,8 +3,7 @@ import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { Search, Chat, CurrentUser } from "./index.js";
-import { setReadStatus } from "../../store/conversations";
-import axios from "axios";
+import { patchMessageReadStatus } from "../../store/utils/thunkCreators";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -26,9 +25,8 @@ const Sidebar = (props) => {
   const conversations = props.conversations || [];
   const { handleChange, searchTerm } = props;
 
-  const updateReadStatus = async (body, convoId) => {
-    const { data } = await axios.patch(`/api/conversations/${convoId}`, body)
-    await props.setReadStatus(data, convoId);
+  const updateReadStatus = async (messages, convoId, userId) => {
+    await props.patchMessageReadStatus(messages, convoId, userId)
   }
 
   return (
@@ -53,8 +51,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setReadStatus: (messages, conversationId) => {
-      dispatch(setReadStatus(messages, conversationId));
+    patchMessageReadStatus: (messages, convoId, userId) => {
+      dispatch(patchMessageReadStatus(messages, convoId, userId));
     },
   };
 };

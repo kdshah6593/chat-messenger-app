@@ -23,19 +23,10 @@ const styles = {
 class Chat extends Component {
   handleClick = async (conversation) => {
     let messages = conversation.messages
-    let readMessages = messages.map(message => {
-      if (message.senderId !== this.props.user.id) {
-        message.isRead = true;
-      }
-      return message;
-    })
     let convoId = conversation.id
+    let userId = this.props.user.id
 
-    const body = {
-      messages: readMessages,
-    }
-
-    await this.props.updateReadStatus(body, convoId)
+    await this.props.updateReadStatus(messages, convoId, userId)
     await this.props.setActiveChat(conversation.otherUser.username);
   };
 

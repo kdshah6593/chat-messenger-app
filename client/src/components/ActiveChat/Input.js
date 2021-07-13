@@ -2,9 +2,8 @@ import React, { Component } from "react";
 import { FormControl, FilledInput } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import { postMessage } from "../../store/utils/thunkCreators";
+import { postMessage, patchMessageReadStatus } from "../../store/utils/thunkCreators";
 import { setReadStatus } from "../../store/conversations";
-import axios from "axios";
 
 const styles = {
   root: {
@@ -34,17 +33,10 @@ class Input extends Component {
   };
 
   handleClick = async (event) => {
+    const messages = this.props.messages
     const convoId = this.props.conversationId
-    let conversation = this.props.conversations.filter(convo => convo.id === convoId)
-    let readMessages = conversation[0].messages.map(message => {
-      if (message.senderId !== this.props.user.id) {
-        message.isRead = true;
-      }
-      return message;
-    })
-    const body = {messages: readMessages}
-    const { data } = await axios.patch(`/api/conversations/${convoId}`, body)
-    await this.props.setReadStatus(data, convoId);
+    const userId = this.props.user.id
+    await this.props.patchMessageReadStatus(messages, convoId, userId)
   }
 
   handleSubmit = async (event) => {
@@ -92,6 +84,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     postMessage: (message) => {
       dispatch(postMessage(message));
+    },
+    patchMessageReadStatus: (messages, convoId, userId) => {
+      dispatch(patchMessageReadStatus(messages, convoId, userId));
     },
     setReadStatus: (messages, conversationId) => {
       dispatch(setReadStatus(messages, conversationId));
