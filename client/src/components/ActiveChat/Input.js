@@ -3,6 +3,8 @@ import { FormControl, FilledInput } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { postMessage } from "../../store/utils/thunkCreators";
+import { setReadStatus } from "../../store/conversations";
+import axios from "axios";
 
 const styles = {
   root: {
@@ -31,6 +33,20 @@ class Input extends Component {
     });
   };
 
+  handleClick = async (event) => {
+    const convoId = this.props.conversationId
+    let conversation = this.props.conversations.filter(convo => convo.id === convoId)
+    let readMessages = conversation[0].messages.map(message => {
+      if (message.senderId !== this.props.user.id) {
+        message.isRead = true;
+      }
+      return message;
+    })
+    const body = {messages: readMessages}
+    const { data } = await axios.patch(`/api/conversations/${convoId}`, body)
+    await this.props.setReadStatus(data, convoId);
+  }
+
   handleSubmit = async (event) => {
     event.preventDefault();
     // add sender user info if posting to a brand new convo, so that the other user will have access to username, profile pic, etc.
@@ -49,7 +65,7 @@ class Input extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <form className={classes.root} onSubmit={this.handleSubmit}>
+      <form className={classes.root} onSubmit={this.handleSubmit} onClick={this.handleClick}>
         <FormControl fullWidth hiddenLabel>
           <FilledInput
             classes={{ root: classes.input }}
@@ -76,6 +92,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     postMessage: (message) => {
       dispatch(postMessage(message));
+    },
+    setReadStatus: (messages, conversationId) => {
+      dispatch(setReadStatus(messages, conversationId));
     },
   };
 };
