@@ -89,61 +89,22 @@ router.patch('/:id', async (req, res, next) => {
       return res.sendStatus(401);
     }
 
-    const userId = req.user.id
-    const { messages, conversationId, otherUserId } = req.body;
+    const { messages } = req.body;
 
-    // const f = await Conversation.findOne({
-    //   where: {
-    //     id: conversationId,
-    //   },
-    //   include: Message
-    // });
-
-    const theConvo = await Conversation.findAll({
-      where: {
-        id: conversationId
-      },
-      attributes: ["id"],
-      order: [[Message, "createdAt", "DESC"]],
-      include: [
-        { model: Message, order: ["createdAt", "DESC"] },
-        {
-          model: User,
-          as: "user1",
-          where: {
-            id: {
-              [Op.not]: userId,
-            },
-          },
-          attributes: ["id", "username", "photoUrl"],
-          required: false,
-        },
-        {
-          model: User,
-          as: "user2",
-          where: {
-            id: {
-              [Op.not]: userId,
-            },
-          },
-          attributes: ["id", "username", "photoUrl"],
-          required: false,
-        },
-      ],
-    });
-    
-    // let h = theConvo[0].toJSON();
-    // console.log(h)
-    
-    for (let i = 0; i < theConvo.length; i++) {
-      const convo = theConvo[i];
-      const convoJSON = convo.toJSON();
-      convoJSON.messages = messages
-      theConvo[i] = convoJSON;
+    const updatedMessages = [];
+    for (let i = 0; i < messages.length; i++) {
+      const msg = await Message.findOne({ 
+        where: {
+          id: messages[i].id
+        }
+      })
+ 
+      msg.isRead = messages[i].isRead;
+      await msg.save();
+      updatedMessages.push(msg)
     }
 
-    res.json(theConvo[0])
-    // res.json(h)
+    res.json(updatedMessages);
 
   } catch (error) {
     next(error);

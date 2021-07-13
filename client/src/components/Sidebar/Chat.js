@@ -33,17 +33,15 @@ class Chat extends Component {
       return message;
     })
     let convoId = conversation.id
-    let otherUserId = conversation.otherUser.id
 
     const body = {
       messages: readMessages,
-      conversationId: convoId,
-      otherUserId: otherUserId
     }
 
     const { data } = await axios.patch(`/api/conversations/${convoId}`, body)
+    console.log(data);
 
-    await this.props.setReadStatus(data.messages, convoId);
+    await this.props.setReadStatus(data, convoId);
     await this.props.setActiveChat(conversation.otherUser.username);
   };
 
