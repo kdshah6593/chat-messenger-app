@@ -20,7 +20,7 @@ const StyledBadge = withStyles({
   anchorOriginTopRightRectangle: {
     top: "0",
     right: "0",
-    transform: "scale(1) translate(-50%, -50%)",
+    transform: "scale(1) translate(-50%, 50%)",
     transformOrigin: "100% 0%",
   }
 })(Badge);
@@ -34,7 +34,7 @@ export default function UnreadBadge(props) {
   </StyledBadge>
 }
 
-// this is my custom badge/notification styling; the above styling I took from the notification class in ChatContent component
+// this is my custom badge/notification styling; the above I took from the notification class in ChatContent component
 // height: "20px",
 // display: "flex",
 // padding: "0 8px",
