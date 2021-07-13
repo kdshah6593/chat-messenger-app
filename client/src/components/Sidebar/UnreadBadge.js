@@ -46,7 +46,6 @@ const StyledBadge = withStyles({
 export default function UnreadBadge(props) {
   return <StyledBadge 
   badgeContent={props.unreadCount()}
-  color="primary"
   >
   {" "}
   </StyledBadge>
