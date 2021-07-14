@@ -25,8 +25,8 @@ const Sidebar = (props) => {
   const conversations = props.conversations || [];
   const { handleChange, searchTerm } = props;
 
-  const updateReadStatus = async (messages, convoId, userId) => {
-    await props.patchMessageReadStatus(messages, convoId, userId)
+  const updateReadStatus = async (messages, convoId, userId, updateConvo) => {
+    await props.patchMessageReadStatus(messages, convoId, userId, updateConvo)
   }
 
   return (
@@ -51,8 +51,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    patchMessageReadStatus: (messages, convoId, userId) => {
-      dispatch(patchMessageReadStatus(messages, convoId, userId));
+    patchMessageReadStatus: (messages, convoId, userId, updateConvo) => {
+      dispatch(patchMessageReadStatus(messages, convoId, userId, updateConvo));
     },
   };
 };

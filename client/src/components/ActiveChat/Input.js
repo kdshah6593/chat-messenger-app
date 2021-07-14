@@ -36,7 +36,8 @@ class Input extends Component {
     const messages = this.props.messages
     const convoId = this.props.conversationId
     const userId = this.props.user.id
-    await this.props.patchMessageReadStatus(messages, convoId, userId)
+    const updateConvo = this.props.conversation
+    await this.props.patchMessageReadStatus(messages, convoId, userId, updateConvo)
   }
 
   handleSubmit = async (event) => {
@@ -85,8 +86,8 @@ const mapDispatchToProps = (dispatch) => {
     postMessage: (message) => {
       dispatch(postMessage(message));
     },
-    patchMessageReadStatus: (messages, convoId, userId) => {
-      dispatch(patchMessageReadStatus(messages, convoId, userId));
+    patchMessageReadStatus: (messages, convoId, userId, updateConvo) => {
+      dispatch(patchMessageReadStatus(messages, convoId, userId, updateConvo));
     },
     setReadStatus: (messages, conversationId) => {
       dispatch(setReadStatus(messages, conversationId));

@@ -83,11 +83,13 @@ export const addNewConvoToStore = (state, recipientId, message) => {
 };
 
 export const setReadMessage = (state, payload) => {
-  const {readMessages, conversationId} = payload;
+  const updateConvo = payload.data.updatedConversation
+  const {conversationId} = payload;
+
   return state.map((convo) => {
     if (convo.id === conversationId) {
-      const convoCopy = { ...convo };
-      convoCopy.messages = readMessages
+      let convoCopy = { ...convo };
+      convoCopy = updateConvo
       return convoCopy
     } else {
       return convo

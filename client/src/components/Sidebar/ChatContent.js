@@ -52,7 +52,7 @@ const ChatContent = (props) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography className={`${classes.previewText} ${props.unreadCount() !== 0 ? classes.previewTextBold : ""}`}>
+        <Typography className={`${classes.previewText} ${props.unreadCount !== 0 ? classes.previewTextBold : ""}`}>
           {latestMessageText}
         </Typography>
       </Box>

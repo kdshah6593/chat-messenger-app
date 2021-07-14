@@ -25,16 +25,11 @@ class Chat extends Component {
     let messages = conversation.messages
     let convoId = conversation.id
     let userId = this.props.user.id
+    let updateConvo = conversation
 
-    await this.props.updateReadStatus(messages, convoId, userId)
+    await this.props.updateReadStatus(messages, convoId, userId, updateConvo)
     await this.props.setActiveChat(conversation.otherUser.username);
   };
-
-  unreadCount = () => {
-    const convo = this.props.conversation
-    const unreadMessages = convo.messages.filter(message => !message.isRead && message.senderId !== this.props.user.id);
-    return unreadMessages.length;
-  }
 
   render() {
     const { classes } = this.props;
@@ -50,7 +45,7 @@ class Chat extends Component {
           online={otherUser.online}
           sidebar={true}
         />
-        <ChatContent conversation={this.props.conversation} unreadCount={this.unreadCount} />
+        <ChatContent conversation={this.props.conversation} unreadCount={this.props.conversation.userUnreadMessages} />
       </Box>
     );
   }

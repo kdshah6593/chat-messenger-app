@@ -68,6 +68,10 @@ router.get("/", async (req, res, next) => {
         convoJSON.otherUser.online = false;
       }
 
+      // set count of unread messages for each user
+      convoJSON.userUnreadMessages = convoJSON.messages.filter(message => !message.isRead && message.senderId !== userId).length;
+      convoJSON.otherUserUnreadMessages = convoJSON.messages.filter(message => !message.isRead && message.senderId === userId).length;
+
       // set properties for notification count and latest message preview
       convoJSON.latestMessageText = convoJSON.messages[0].text; //convoJSON.messages.length - 1
 
@@ -85,15 +89,15 @@ router.get("/", async (req, res, next) => {
 
 router.patch('/:id', async (req, res, next) => {
   try {
-    const convo = await Conversation.findByPk(req.params.id)
+    let convo = await Conversation.findByPk(req.params.id)
     if (!req.user) {
       return res.sendStatus(401);
     } else if (req.user.id !== convo.user1Id && req.user.id !== convo.user2Id) {
       return res.sendStatus(401);
     }
 
+    // take the "read" messages and use their id to find the same message in backend and update their read status
     const { messages } = req.body;
-
     const updatedMessages = [];
     for (let i = 0; i < messages.length; i++) {
       const msg = await Message.findOne({ 
@@ -101,12 +105,18 @@ router.patch('/:id', async (req, res, next) => {
           id: messages[i].id
         }
       })
-
       msg.update({isRead: messages[i].isRead})
       updatedMessages.push(msg)
     }
 
-    res.status(200).json(updatedMessages);
+    // update user's read message count
+    const needToUpdateConvo = req.body.conversation
+    needToUpdateConvo.userUnreadMessages = needToUpdateConvo.messages.filter(message => !message.isRead && message.senderId !== req.user.id).length;
+    needToUpdateConvo.otherUserUnreadMessages = needToUpdateConvo.messages.filter(message => !message.isRead && message.senderId === req.user.id).length;
+
+
+    response = {updatedMessages: updatedMessages, updatedConversation: needToUpdateConvo}
+    res.status(200).json(response);
 
   } catch (error) {
     next(error);
