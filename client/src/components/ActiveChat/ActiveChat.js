@@ -25,6 +25,14 @@ const ActiveChat = (props) => {
   const { user } = props;
   const conversation = props.conversation || {};
 
+  const lastReadMessage = (messages, userId) => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].isRead && messages[i].senderId === userId ) {
+        return messages[i].id
+      }
+    }
+  }
+
   return (
     <Box className={classes.root}>
       {conversation.otherUser && (
@@ -38,6 +46,7 @@ const ActiveChat = (props) => {
               messages={conversation.messages}
               otherUser={conversation.otherUser}
               userId={user.id}
+              lastReadMessage={lastReadMessage}
             />
             <Input
               otherUser={conversation.otherUser}
