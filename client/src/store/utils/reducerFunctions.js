@@ -88,8 +88,9 @@ export const setReadMessage = (state, payload) => {
 
   return state.map((convo) => {
     if (convo.id === conversationId) {
-      let convoCopy = { ...convo };
-      convoCopy = updateConvo
+      const convoCopy = { ...convo };
+      convoCopy.userUnreadMessages = updateConvo.userUnreadMessages
+      convoCopy.otherUserUnreadMessages = updateConvo.otherUserUnreadMessages
       return convoCopy
     } else {
       return convo
