@@ -8,14 +8,17 @@ export const addMessageToStore = (state, payload) => {
       messages: [message],
     };
     newConvo.latestMessageText = message.text;
+    newConvo.userUnreadMessages = newConvo.messages.filter(message => !message.isRead && message.senderId === newConvo.otherUser.id).length;
+    newConvo.otherUserUnreadMessages = newConvo.messages.filter(message => !message.isRead && message.senderId !== newConvo.otherUser.id).length;
     return [newConvo, ...state];
   }
-
   return state.map((convo) => {
     if (convo.id === message.conversationId) {
       const convoCopy = { ...convo };
       convoCopy.messages.push(message);
       convoCopy.latestMessageText = message.text;
+      convoCopy.userUnreadMessages = convoCopy.messages.filter(message => !message.isRead && message.senderId === convoCopy.otherUser.id).length;
+      convoCopy.otherUserUnreadMessages = convoCopy.messages.filter(message => !message.isRead && message.senderId !== convoCopy.otherUser.id).length;
 
       return convoCopy;
     } else {
@@ -75,6 +78,8 @@ export const addNewConvoToStore = (state, recipientId, message) => {
       newConvo.id = message.conversationId;
       newConvo.messages.push(message);
       newConvo.latestMessageText = message.text;
+      newConvo.userUnreadMessages = newConvo.messages.filter(message => !message.isRead && message.senderId === newConvo.otherUser.id).length;
+      newConvo.otherUserUnreadMessages = newConvo.messages.filter(message => !message.isRead && message.senderId !== newConvo.otherUser.id).length;
       return newConvo;
     } else {
       return convo;
