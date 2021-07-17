@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import UnreadBadge from "./UnreadBadge";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,6 +18,11 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 12,
     color: "#9CADC8",
     letterSpacing: -0.17,
+  },
+  previewTextBold: {
+    fontWeight: 900,
+    fontSize: 14,
+    color:"#000",
   },
   notification: {
     height: 20,
@@ -46,10 +52,11 @@ const ChatContent = (props) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography className={classes.previewText}>
+        <Typography className={`${classes.previewText} ${props.unreadCount !== 0 ? classes.previewTextBold : ""}`}>
           {latestMessageText}
         </Typography>
       </Box>
+      <UnreadBadge unreadCount={props.unreadCount} />
     </Box>
   );
 };

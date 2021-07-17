@@ -19,8 +19,15 @@ const styles = {
   },
 };
 
+
 class Chat extends Component {
   handleClick = async (conversation) => {
+    let messages = conversation.messages
+    let convoId = conversation.id
+    let userId = this.props.user.id
+    let updateConvo = conversation
+
+    await this.props.updateReadStatus(messages, convoId, userId, updateConvo)
     await this.props.setActiveChat(conversation.otherUser.username);
   };
 
@@ -38,7 +45,7 @@ class Chat extends Component {
           online={otherUser.online}
           sidebar={true}
         />
-        <ChatContent conversation={this.props.conversation} />
+        <ChatContent conversation={this.props.conversation} unreadCount={this.props.conversation.userUnreadMessages} />
       </Box>
     );
   }
@@ -52,4 +59,10 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(withStyles(styles)(Chat));
+const mapStateToProps = (state) => {
+  return {
+    user: state.user
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Chat));

@@ -68,6 +68,10 @@ router.get("/", async (req, res, next) => {
         convoJSON.otherUser.online = false;
       }
 
+      // set count of unread messages for each user
+      convoJSON.userUnreadMessages = convoJSON.messages.filter(message => !message.isRead && message.senderId !== userId).length;
+      convoJSON.otherUserUnreadMessages = convoJSON.messages.filter(message => !message.isRead && message.senderId === userId).length;
+
       // set properties for notification count and latest message preview
       convoJSON.latestMessageText = convoJSON.messages[0].text; //convoJSON.messages.length - 1
 
@@ -82,5 +86,41 @@ router.get("/", async (req, res, next) => {
     next(error);
   }
 });
+
+router.patch('/read/:id', async (req, res, next) => {
+  try {
+    let convo = await Conversation.findByPk(req.params.id)
+    if (!req.user) {
+      return res.sendStatus(401);
+    } else if (req.user.id !== convo.user1Id && req.user.id !== convo.user2Id) {
+      return res.sendStatus(401);
+    }
+
+    await Message.update({ isRead: true }, {
+      where: {
+        conversationId: req.params.id,
+        senderId: req.body.conversation.otherUser.id
+      }
+    })
+
+    const updatedMessages = Message.findAll({
+      where: {
+        conversationId: req.params.id,
+        senderId: req.body.conversation.otherUser.id
+      }
+    })
+
+    // update user's read message count
+    const needToUpdateConvo = req.body.conversation
+    needToUpdateConvo.userUnreadMessages = needToUpdateConvo.messages.filter(message => !message.isRead && message.senderId !== req.user.id).length;
+    needToUpdateConvo.otherUserUnreadMessages = needToUpdateConvo.messages.filter(message => !message.isRead && message.senderId === req.user.id).length;
+
+    response = {updatedMessages: updatedMessages, updatedConversation: needToUpdateConvo}
+    res.status(200).json(response);
+
+  } catch (error) {
+    next(error);
+  }
+})
 
 module.exports = router;
