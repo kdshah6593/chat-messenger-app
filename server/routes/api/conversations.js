@@ -96,24 +96,24 @@ router.patch('/read/:id', async (req, res, next) => {
       return res.sendStatus(401);
     }
 
-    // take the "read" messages and use their id to find the same message in backend and update their read status
-    const { messages } = req.body;
-    const updatedMessages = [];
-    for (let i = 0; i < messages.length; i++) {
-      const msg = await Message.findOne({ 
-        where: {
-          id: messages[i].id
-        }
-      })
-      msg.update({isRead: messages[i].isRead})
-      updatedMessages.push(msg)
-    }
+    await Message.update({ isRead: true }, {
+      where: {
+        conversationId: req.params.id,
+        senderId: req.body.conversation.otherUser.id
+      }
+    })
+
+    const updatedMessages = Message.findAll({
+      where: {
+        conversationId: req.params.id,
+        senderId: req.body.conversation.otherUser.id
+      }
+    })
 
     // update user's read message count
     const needToUpdateConvo = req.body.conversation
     needToUpdateConvo.userUnreadMessages = needToUpdateConvo.messages.filter(message => !message.isRead && message.senderId !== req.user.id).length;
     needToUpdateConvo.otherUserUnreadMessages = needToUpdateConvo.messages.filter(message => !message.isRead && message.senderId === req.user.id).length;
-
 
     response = {updatedMessages: updatedMessages, updatedConversation: needToUpdateConvo}
     res.status(200).json(response);
