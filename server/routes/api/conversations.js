@@ -87,7 +87,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.patch('/:id', async (req, res, next) => {
+router.patch('/read/:id', async (req, res, next) => {
   try {
     let convo = await Conversation.findByPk(req.params.id)
     if (!req.user) {

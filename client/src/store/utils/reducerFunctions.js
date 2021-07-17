@@ -1,3 +1,13 @@
+const setUnreadMessageForUser = (conversation) => {
+  const unreadMessages = conversation.messages.filter(message => !message.isRead && message.senderId === conversation.otherUser.id)
+  return unreadMessages.length;
+}
+
+const setUnreadMessageForOtherUser = (conversation) => {
+  const unreadMessages = conversation.messages.filter(message => !message.isRead && message.senderId !== conversation.otherUser.id)
+  return unreadMessages.length;
+}
+
 export const addMessageToStore = (state, payload) => {
   const { message, sender } = payload;
   // if sender isn't null, that means the message needs to be put in a brand new convo
@@ -8,8 +18,8 @@ export const addMessageToStore = (state, payload) => {
       messages: [message],
     };
     newConvo.latestMessageText = message.text;
-    newConvo.userUnreadMessages = newConvo.messages.filter(message => !message.isRead && message.senderId === newConvo.otherUser.id).length;
-    newConvo.otherUserUnreadMessages = newConvo.messages.filter(message => !message.isRead && message.senderId !== newConvo.otherUser.id).length;
+    newConvo.userUnreadMessages = setUnreadMessageForUser(newConvo)
+    newConvo.otherUserUnreadMessages = setUnreadMessageForOtherUser(newConvo)
     return [newConvo, ...state];
   }
   return state.map((convo) => {
@@ -17,8 +27,8 @@ export const addMessageToStore = (state, payload) => {
       const convoCopy = { ...convo };
       convoCopy.messages.push(message);
       convoCopy.latestMessageText = message.text;
-      convoCopy.userUnreadMessages = convoCopy.messages.filter(message => !message.isRead && message.senderId === convoCopy.otherUser.id).length;
-      convoCopy.otherUserUnreadMessages = convoCopy.messages.filter(message => !message.isRead && message.senderId !== convoCopy.otherUser.id).length;
+      convoCopy.userUnreadMessages = setUnreadMessageForUser(convoCopy)
+      convoCopy.otherUserUnreadMessages = setUnreadMessageForOtherUser(convoCopy)
 
       return convoCopy;
     } else {
@@ -78,8 +88,8 @@ export const addNewConvoToStore = (state, recipientId, message) => {
       newConvo.id = message.conversationId;
       newConvo.messages.push(message);
       newConvo.latestMessageText = message.text;
-      newConvo.userUnreadMessages = newConvo.messages.filter(message => !message.isRead && message.senderId === newConvo.otherUser.id).length;
-      newConvo.otherUserUnreadMessages = newConvo.messages.filter(message => !message.isRead && message.senderId !== newConvo.otherUser.id).length;
+      newConvo.userUnreadMessages = setUnreadMessageForUser(newConvo)
+      newConvo.otherUserUnreadMessages = setUnreadMessageForOtherUser(newConvo)
       return newConvo;
     } else {
       return convo;
