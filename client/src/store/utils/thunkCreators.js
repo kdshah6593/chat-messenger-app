@@ -119,29 +119,6 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   }
 };
 
-// const updateMessageReadStatus = async (messages, convoId, userId, updateConvo) => {
-//   let readMessages = messages.map(message => {
-//     if (message.senderId !== userId) {
-//       message.isRead = true;
-//     }
-//     return message
-//   })
-//   const body = {messages: readMessages, conversation: updateConvo}
-//   const { data } = await axios.patch(`/api/conversations/${convoId}`, body)
-//   return data;
-// };
-
-// export const patchMessageReadStatus = (messages, convoId, userId, updateConvo) => async (dispatch) => {
-//   try {
-//     const data = await updateMessageReadStatus(messages, convoId, userId, updateConvo);
-
-//     dispatch(setReadStatus(data, convoId))
-
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
-
 export const patchMessageReadStatus = (messages, convoId, userId, updateConvo) => async (dispatch) => {
   try {
     let readMessages = messages.map(message => {
