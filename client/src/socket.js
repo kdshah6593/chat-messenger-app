@@ -6,7 +6,7 @@ import {
   addOnlineUser,
 } from "./store/conversations";
 
-const socket = io("http://localhost:3001");
+const socket = io("http://localhost:3001", { autoConnect: false });
 
 socket.on("connect", () => {
   console.log("connected to server");
