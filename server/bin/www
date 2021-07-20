@@ -24,7 +24,12 @@ app.set("port", port);
  */
 
 const server = http.createServer(app);
-socketapi.io.attach(server);
+socketapi.io.attach(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PATCH", "DELETE"]
+  }
+});
 
 /**
  * Listen on provided port, on all network interfaces, and sync database.
