@@ -7,8 +7,8 @@ const onlineUsers = require("./onlineUsers");
 // Add your socket.io logic here!
 io.on("connection", (socket) => {
     socket.on("go-online", (id) => {
-      if (!onlineUsers.includes(id)) {
-        onlineUsers.push(id);
+      if (!onlineUsers.hasOwnProperty(id)) {
+        onlineUsers[id] = id;
       }
       // send the user who just went online to everyone else who is already online
       socket.broadcast.emit("add-online-user", id);
@@ -22,9 +22,8 @@ io.on("connection", (socket) => {
     });
   
     socket.on("logout", (id) => {
-      if (onlineUsers.includes(id)) {
-        userIndex = onlineUsers.indexOf(id);
-        onlineUsers.splice(userIndex, 1);
+      if (onlineUsers.hasOwnProperty(id)) {
+        delete onlineUsers[id];
         socket.broadcast.emit("remove-offline-user", id);
       }
     });
