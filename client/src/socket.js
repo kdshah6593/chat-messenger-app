@@ -10,6 +10,7 @@ const socket = io("http://localhost:3001", { autoConnect: false });
 
 socket.on("connect", () => {
   console.log("connected to server");
+  socket.emit("join", {id: store.getState().user.id})
 
   socket.on("add-online-user", (id) => {
     store.dispatch(addOnlineUser(id));

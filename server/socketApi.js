@@ -4,9 +4,16 @@ const socketapi = {
 };
 const onlineUsers = require("./onlineUsers");
 
+const userSocketMap = {};
+
 // Add your socket.io logic here!
 io.on("connection", (socket) => {
-    socket.on("go-online", (id) => {
+
+  socket.on("join", (data) => {
+    userSocketMap[data.id] = socket.id
+  })
+
+  socket.on("go-online", (id) => {
       if (!onlineUsers.hasOwnProperty(id)) {
         onlineUsers[id] = id;
       }
@@ -15,7 +22,9 @@ io.on("connection", (socket) => {
     });
   
     socket.on("new-message", (data) => {
-      socket.broadcast.emit("new-message", {
+      const recipientId = data.recipientId;
+      
+      socket.to(userSocketMap[recipientId]).emit("new-message", {
         message: data.message,
         sender: data.sender,
       });
