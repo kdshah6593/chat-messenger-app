@@ -3,11 +3,23 @@ const socketapi = {
     io: io
 };
 const onlineUsers = require("./onlineUsers");
+const jwt = require("jsonwebtoken");
 
 const userSocketMap = {};
 
 // Add your socket.io logic here!
-io.on("connection", (socket) => {
+io.use((socket, next) => {
+  if (socket.handshake.auth && socket.handshake.auth.token) {
+    jwt.verify(socket.handshake.auth.token, process.env.SESSION_SECRET, function(err, decoded) {
+      if (err) return next(new Error('Authentication error'));
+      socket.decoded = decoded;
+      next();
+    });
+  } else {
+    next(new Error('Authentication error'));
+  }
+})
+.on("connection", (socket) => {
 
   socket.on("join", (data) => {
     userSocketMap[data.id] = socket.id
@@ -40,3 +52,5 @@ io.on("connection", (socket) => {
 // end of socket.io logic
 
 module.exports = socketapi;
+
+
