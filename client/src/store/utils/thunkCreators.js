@@ -67,6 +67,7 @@ export const logout = (id) => async (dispatch) => {
     await localStorage.removeItem("messenger-token");
     dispatch(gotUser({}));
     socket.emit("logout", id);
+    socket.disconnect();
   } catch (error) {
     console.error(error);
   }
