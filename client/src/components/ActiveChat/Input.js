@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { FormControl, FilledInput } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { postMessage, patchMessageReadStatus } from "../../store/utils/thunkCreators";
-import { setReadStatus } from "../../store/conversations";
 
 const styles = {
   root: {
@@ -20,6 +19,9 @@ const styles = {
 
 const Input = (props) => {
   const [text, setText] = useState("")
+  const user = useSelector(state => state.user)
+  const conversations = useSelector(state => state.conversations)
+  const dispatch = useDispatch();
 
   const handleChange = (event) => {
     setText(event.target.value)
@@ -28,9 +30,9 @@ const Input = (props) => {
   const handleClick = async (event) => {
     const messages = props.messages
     const convoId = props.conversationId
-    const userId = props.user.id
+    const userId = user.id
     const updateConvo = props.conversation
-    await props.patchMessageReadStatus(messages, convoId, userId, updateConvo)
+    await dispatch(patchMessageReadStatus(messages, convoId, userId, updateConvo));
   }
 
   const handleSubmit = async (event) => {
@@ -42,7 +44,7 @@ const Input = (props) => {
       conversationId: props.conversationId,
       sender: props.conversationId ? null : props.user,
     };
-    await props.postMessage(reqBody);
+    await dispatch(postMessage(reqBody));
     setText("");
   };
 
@@ -63,28 +65,4 @@ const Input = (props) => {
   );
 }
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.user,
-    conversations: state.conversations,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    postMessage: (message) => {
-      dispatch(postMessage(message));
-    },
-    patchMessageReadStatus: (messages, convoId, userId, updateConvo) => {
-      dispatch(patchMessageReadStatus(messages, convoId, userId, updateConvo));
-    },
-    setReadStatus: (messages, conversationId) => {
-      dispatch(setReadStatus(messages, conversationId));
-    },
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(Input));
+export default withStyles(styles)(Input);

@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Search, Chat, CurrentUser } from "./index.js";
 import { patchMessageReadStatus } from "../../store/utils/thunkCreators";
 
@@ -22,11 +22,12 @@ const useStyles = makeStyles(() => ({
 
 const Sidebar = (props) => {
   const classes = useStyles();
-  const conversations = props.conversations || [];
+  const dispatch = useDispatch();
   const { handleChange, searchTerm } = props;
+  const conversations = useSelector(state => state.conversations) || [];
 
   const updateReadStatus = async (messages, convoId, userId, updateConvo) => {
-    await props.patchMessageReadStatus(messages, convoId, userId, updateConvo)
+    await dispatch(patchMessageReadStatus(messages, convoId, userId, updateConvo))
   }
 
   return (
@@ -43,18 +44,4 @@ const Sidebar = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    conversations: state.conversations
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    patchMessageReadStatus: (messages, convoId, userId, updateConvo) => {
-      dispatch(patchMessageReadStatus(messages, convoId, userId, updateConvo));
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);
+export default Sidebar;

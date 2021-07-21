@@ -3,7 +3,7 @@ import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { withStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 const styles = {
   root: {
@@ -21,14 +21,17 @@ const styles = {
 
 
 const Chat = (props) => {
+  const user = useSelector(state => state.user)
+  const dispatch = useDispatch();
+  
   const handleClick = async (conversation) => {
     let messages = conversation.messages
     let convoId = conversation.id
-    let userId = props.user.id
+    let userId = user.id
     let updateConvo = conversation
 
     await props.updateReadStatus(messages, convoId, userId, updateConvo)
-    await props.setActiveChat(conversation.otherUser.username);
+    await dispatch(setActiveChat(conversation.otherUser.username));
   };
 
   const { classes } = props;
@@ -49,18 +52,4 @@ const Chat = (props) => {
   );
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setActiveChat: (id) => {
-      dispatch(setActiveChat(id));
-    },
-  };
-};
-
-const mapStateToProps = (state) => {
-  return {
-    user: state.user
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Chat));
+export default withStyles(styles)(Chat);
