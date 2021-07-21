@@ -17,12 +17,10 @@ const styles = {
 const Home = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  // componentDidUpdate()
   useEffect(() => {
     setIsLoggedIn(true);
   }, [props.user.id])
 
-  // componentDidMount()
   useEffect(() => {
     props.fetchConversations();
   }, [props])
