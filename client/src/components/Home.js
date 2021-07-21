@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { Redirect } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Grid, CssBaseline, Button } from "@material-ui/core";
@@ -8,17 +8,18 @@ import { ActiveChat } from "./ActiveChat";
 import { logout, fetchConversations } from "../store/utils/thunkCreators";
 import { clearOnLogout } from "../store/index";
 
-const styles = {
+const useStyles = makeStyles({
   root: {
     height: "97vh",
   },
-};
+})
 
 const Home = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const dispatch = useDispatch();
   const user = useSelector(state => state.user)
   const conversations = useSelector(state => state.conversations)
+  const classes = useStyles();
 
   useEffect(() => {
     setIsLoggedIn(true);
@@ -33,7 +34,6 @@ const Home = (props) => {
     await dispatch(clearOnLogout())
   };
 
-  const { classes } = props;
   if (!user.id) {
     // If we were previously logged in, redirect to login instead of register
     if (isLoggedIn) return <Redirect to="/login" />;
@@ -55,4 +55,4 @@ const Home = (props) => {
   );
 }
 
-export default withStyles(styles)(Home);
+export default Home;

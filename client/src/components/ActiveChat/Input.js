@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { FormControl, FilledInput } from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { useSelector, useDispatch } from "react-redux";
 import { postMessage, patchMessageReadStatus } from "../../store/utils/thunkCreators";
 
-const styles = {
+const useStyles = makeStyles({
   root: {
     justifySelf: "flex-end",
     marginTop: 15,
@@ -15,13 +15,14 @@ const styles = {
     borderRadius: 8,
     marginBottom: 20,
   },
-};
+});
 
 const Input = (props) => {
   const [text, setText] = useState("")
   const user = useSelector(state => state.user)
   const conversations = useSelector(state => state.conversations)
   const dispatch = useDispatch();
+  const classes = useStyles();
 
   const handleChange = (event) => {
     setText(event.target.value)
@@ -48,7 +49,7 @@ const Input = (props) => {
     setText("");
   };
 
-  const { classes } = props;
+  
   return (
     <form className={classes.root} onSubmit={handleSubmit} onClick={handleClick}>
       <FormControl fullWidth hiddenLabel>
@@ -65,4 +66,4 @@ const Input = (props) => {
   );
 }
 
-export default withStyles(styles)(Input);
+export default Input;

@@ -1,11 +1,11 @@
 import React from "react";
 import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
 import { useSelector, useDispatch } from "react-redux";
 
-const styles = {
+const useStyles = makeStyles({
   root: {
     borderRadius: 8,
     height: 80,
@@ -17,12 +17,13 @@ const styles = {
       cursor: "grab",
     },
   },
-};
+});
 
 
 const Chat = (props) => {
   const user = useSelector(state => state.user)
   const dispatch = useDispatch();
+  const classes = useStyles();
   
   const handleClick = async (conversation) => {
     let messages = conversation.messages
@@ -34,7 +35,7 @@ const Chat = (props) => {
     await dispatch(setActiveChat(conversation.otherUser.username));
   };
 
-  const { classes } = props;
+  
   const otherUser = props.conversation.otherUser;
   return (
     <Box
@@ -52,4 +53,4 @@ const Chat = (props) => {
   );
 }
 
-export default withStyles(styles)(Chat);
+export default Chat;
