@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { withStyles } from "@material-ui/core/styles";
@@ -20,35 +20,33 @@ const styles = {
 };
 
 
-class Chat extends Component {
-  handleClick = async (conversation) => {
+const Chat = (props) => {
+  const handleClick = async (conversation) => {
     let messages = conversation.messages
     let convoId = conversation.id
-    let userId = this.props.user.id
+    let userId = props.user.id
     let updateConvo = conversation
 
-    await this.props.updateReadStatus(messages, convoId, userId, updateConvo)
-    await this.props.setActiveChat(conversation.otherUser.username);
+    await props.updateReadStatus(messages, convoId, userId, updateConvo)
+    await props.setActiveChat(conversation.otherUser.username);
   };
 
-  render() {
-    const { classes } = this.props;
-    const otherUser = this.props.conversation.otherUser;
-    return (
-      <Box
-        onClick={() => this.handleClick(this.props.conversation)}
-        className={classes.root}
-      >
-        <BadgeAvatar
-          photoUrl={otherUser.photoUrl}
-          username={otherUser.username}
-          online={otherUser.online}
-          sidebar={true}
-        />
-        <ChatContent conversation={this.props.conversation} unreadCount={this.props.conversation.userUnreadMessages} />
-      </Box>
-    );
-  }
+  const { classes } = props;
+  const otherUser = props.conversation.otherUser;
+  return (
+    <Box
+      onClick={() => handleClick(props.conversation)}
+      className={classes.root}
+    >
+      <BadgeAvatar
+        photoUrl={otherUser.photoUrl}
+        username={otherUser.username}
+        online={otherUser.online}
+        sidebar={true}
+      />
+      <ChatContent conversation={props.conversation} unreadCount={props.conversation.userUnreadMessages} />
+    </Box>
+  );
 }
 
 const mapDispatchToProps = (dispatch) => {

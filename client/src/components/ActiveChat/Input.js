@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { FormControl, FilledInput } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
@@ -18,60 +18,49 @@ const styles = {
   },
 };
 
-class Input extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      text: "",
-    };
-  }
+const Input = (props) => {
+  const [text, setText] = useState("")
 
-  handleChange = (event) => {
-    this.setState({
-      text: event.target.value,
-    });
+  const handleChange = (event) => {
+    setText(event.target.value)
   };
 
-  handleClick = async (event) => {
-    const messages = this.props.messages
-    const convoId = this.props.conversationId
-    const userId = this.props.user.id
-    const updateConvo = this.props.conversation
-    await this.props.patchMessageReadStatus(messages, convoId, userId, updateConvo)
+  const handleClick = async (event) => {
+    const messages = props.messages
+    const convoId = props.conversationId
+    const userId = props.user.id
+    const updateConvo = props.conversation
+    await props.patchMessageReadStatus(messages, convoId, userId, updateConvo)
   }
 
-  handleSubmit = async (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     // add sender user info if posting to a brand new convo, so that the other user will have access to username, profile pic, etc.
     const reqBody = {
       text: event.target.text.value,
-      recipientId: this.props.otherUser.id,
-      conversationId: this.props.conversationId,
-      sender: this.props.conversationId ? null : this.props.user,
+      recipientId: props.otherUser.id,
+      conversationId: props.conversationId,
+      sender: props.conversationId ? null : props.user,
     };
-    await this.props.postMessage(reqBody);
-    this.setState({
-      text: "",
-    });
+    await props.postMessage(reqBody);
+    setText("");
   };
 
-  render() {
-    const { classes } = this.props;
-    return (
-      <form className={classes.root} onSubmit={this.handleSubmit} onClick={this.handleClick}>
-        <FormControl fullWidth hiddenLabel>
-          <FilledInput
-            classes={{ root: classes.input }}
-            disableUnderline
-            placeholder="Type something..."
-            value={this.state.text}
-            name="text"
-            onChange={this.handleChange}
-          />
-        </FormControl>
-      </form>
-    );
-  }
+  const { classes } = props;
+  return (
+    <form className={classes.root} onSubmit={handleSubmit} onClick={handleClick}>
+      <FormControl fullWidth hiddenLabel>
+        <FilledInput
+          classes={{ root: classes.input }}
+          disableUnderline
+          placeholder="Type something..."
+          value={text}
+          name="text"
+          onChange={handleChange}
+        />
+      </FormControl>
+    </form>
+  );
 }
 
 const mapStateToProps = (state) => {
