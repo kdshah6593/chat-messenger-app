@@ -38,6 +38,7 @@ export const register = (credentials) => async (dispatch) => {
     const { data } = await axios.post("/auth/register", credentials);
     await localStorage.setItem("messenger-token", data.token);
     dispatch(gotUser(data));
+    socket.auth = { token: localStorage.getItem("messenger-token") }
     socket.connect();
     socket.emit("go-online", data.id);
   } catch (error) {
