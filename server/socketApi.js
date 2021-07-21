@@ -45,6 +45,7 @@ io.use((socket, next) => {
     socket.on("logout", (id) => {
       if (onlineUsers.hasOwnProperty(id)) {
         delete onlineUsers[id];
+        delete userSocketMap[id];
         socket.broadcast.emit("remove-offline-user", id);
       }
     });
