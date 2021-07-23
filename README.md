@@ -1,6 +1,6 @@
 # Messenger
 
-A one-to-one realtime chat app.
+A one-to-one realtime chat app. Built using PostgreSQL, Sequelize, Express, React, and NodeJS.
 
 ## Running the Application Locally
 
