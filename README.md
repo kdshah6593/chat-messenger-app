@@ -2,7 +2,24 @@
 
 A one-to-one realtime chat app.
 
-## Initial Setup
+## Running the Application Locally
+
+In one terminal, start the front end:
+
+```
+cd client
+npm start
+```
+
+In a separate terminal, start the back end:
+
+```
+cd server
+npm run dev
+```
+
+
+### Initial Setup
 
 Create the PostgreSQL database (these instructions may need to be adapted for your operating system):
 
@@ -33,20 +50,4 @@ In the client folder, install dependencies:
 ```
 cd client
 npm install
-```
-
-### Running the Application Locally
-
-In one terminal, start the front end:
-
-```
-cd client
-npm start
-```
-
-In a separate terminal, start the back end:
-
-```
-cd server
-npm run dev
 ```
